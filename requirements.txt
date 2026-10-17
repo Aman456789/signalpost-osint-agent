@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+httpx
+pydantic
+pydantic-settings
+instructor
+openai
+trafilatura
+selectolax
+rapidfuzz
+pytest
+pytest-asyncio
+pytest-cov
+ruff
