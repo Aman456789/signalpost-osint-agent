@@ -14,6 +14,7 @@ FIELD_PATHS = (
     "navn",
     "organisasjonsform.kode",
     "hjemmeside",
+    "forretningsadresse.poststed",
     "registreringsdatoEnhetsregisteret",
     "antallAnsatte",
     "naeringskode1.beskrivelse",
