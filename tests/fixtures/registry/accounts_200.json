@@ -1,0 +1,4 @@
+[
+{"id":1,"virksomhet":{"organisasjonsnummer":"923456783"},"regnskapsperiode":{"fraDato":"2023-01-01","tilDato":"2023-12-31"},"valuta":"NOK","eiendeler":{"sumEiendeler":8100000},"egenkapitalGjeld":{"egenkapital":{"sumEgenkapital":3000000}},"resultatregnskapResultat":{"driftsresultat":{"driftsinntekter":{"sumDriftsinntekter":11500000},"driftsresultat":900000},"aarsresultat":650000}},
+{"id":2,"virksomhet":{"organisasjonsnummer":"923456783"},"regnskapsperiode":{"fraDato":"2024-01-01","tilDato":"2024-12-31"},"valuta":"NOK","eiendeler":{"sumEiendeler":9250000},"egenkapitalGjeld":{"egenkapital":{"sumEgenkapital":3400000}},"resultatregnskapResultat":{"driftsresultat":{"driftsinntekter":{"sumDriftsinntekter":12345678.5},"driftsresultat":1020000},"aarsresultat":800000}}
+]

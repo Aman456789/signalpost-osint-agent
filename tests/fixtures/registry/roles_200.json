@@ -1,0 +1,8 @@
+{"rollegrupper":[{"type":{"kode":"STYR","beskrivelse":"Styre"},"roller":[
+{"type":{"kode":"LEDE","beskrivelse":"Styrets leder"},"person":{"fodselsdato":"1970-01-01","navn":{"fornavn":"Kari","etternavn":"Nordmann"},"erDoed":false},"fratraadt":false},
+{"type":{"kode":"MEDL","beskrivelse":"Styremedlem"},"person":{"fodselsdato":"1985-05-05","navn":{"fornavn":"Ola","mellomnavn":"Per","etternavn":"Hansen"},"erDoed":false},"fratraadt":false},
+{"type":{"kode":"MEDL","beskrivelse":"Styremedlem"},"person":{"fodselsdato":"1960-02-02","navn":{"fornavn":"Gammel","etternavn":"Styremedlem"},"erDoed":false},"fratraadt":true}]},
+{"type":{"kode":"DAGL","beskrivelse":"Daglig leder"},"roller":[
+{"type":{"kode":"DAGL","beskrivelse":"Daglig leder"},"person":{"fodselsdato":"1975-07-07","navn":{"fornavn":"Siri","etternavn":"Berg"},"erDoed":false},"fratraadt":false}]},
+{"type":{"kode":"REVI","beskrivelse":"Revisor"},"roller":[
+{"type":{"kode":"REVI","beskrivelse":"Revisor"},"enhet":{"organisasjonsnummer":"984661185","navn":["REVISJON ØST AS"]},"fratraadt":false}]}]}
