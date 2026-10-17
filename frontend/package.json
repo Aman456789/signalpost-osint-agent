@@ -15,11 +15,11 @@
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.0",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.1.0",
-    "jsdom": "^25.0.0",
-    "vitest": "^2.1.0"
+    "jsdom": "^25.0.1",
+    "vitest": "^2.1.9"
   }
 }
