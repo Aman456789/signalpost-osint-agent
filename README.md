@@ -14,3 +14,19 @@ stub command. The registry, website and AI steps are added in later segments.
     pip install -r requirements.txt
     pytest -q
     make run
+
+## Dashboard (frontend/)
+
+Next.js (App Router) in plain JavaScript. Needs Node 20.9 or newer.
+
+```bash
+cd frontend
+npm install
+cp .env.local.example .env.local
+npm test
+npm run build
+npm run dev          # http://localhost:3000
+```
+
+Start the API from the repository root in a second terminal with `make api`.
+CORS allows `http://localhost:3000` only.

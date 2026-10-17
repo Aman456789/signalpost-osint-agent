@@ -1,0 +1,25 @@
+{
+  "name": "signalpost-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.1.0",
+    "jsdom": "^25.0.0",
+    "vitest": "^2.1.0"
+  }
+}

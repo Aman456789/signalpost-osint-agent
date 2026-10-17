@@ -1,4 +1,4 @@
-.PHONY: run test demo pilot baseline replay api
+.PHONY: run test demo pilot baseline replay api web
 
 run:
 	bash scripts/run_one.sh data/input/companies.txt
@@ -20,3 +20,6 @@ replay:
 
 api:
 	uvicorn api.main:app --reload
+
+web:
+	cd frontend && npm run dev
