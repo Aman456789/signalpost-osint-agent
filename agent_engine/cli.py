@@ -16,11 +16,13 @@ from agent_engine.registry_client import REGISTRY_TIMEOUT_S, RegistryClient
 from governor.budget_ledger import BudgetLedger
 from governor.rate_limiter import SlidingWindowLimiter
 from governor.time_kill_switch import TimeKillSwitch
+from storage.store import StoreError, open_store
 
 log = logging.getLogger("signalpost.cli")
 
 
-async def run_job(settings, orgnrs, *, pass1_only=False, resume=False, transport=None) -> Orchestrator:
+async def run_job(settings, orgnrs, *, pass1_only=False, resume=False, transport=None,
+                  store=None, enrich=None) -> Orchestrator:
     ledger = BudgetLedger(
         soft_cap=settings.soft_cap_requests,
         brake=settings.brake_requests,
@@ -28,7 +30,9 @@ async def run_job(settings, orgnrs, *, pass1_only=False, resume=False, transport
         limiter=SlidingWindowLimiter(settings.llm_rpm),
     )
     async with httpx.AsyncClient(transport=transport, timeout=REGISTRY_TIMEOUT_S) as http:
-        orchestrator = Orchestrator(settings, RegistryClient(http, ledger), ledger, TimeKillSwitch())
+        hooks = {"enrich": enrich} if enrich else {}
+        orchestrator = Orchestrator(settings, RegistryClient(http, ledger), ledger, TimeKillSwitch(),
+                                    store=store, **hooks)
         await orchestrator.run(orgnrs, pass1_only=pass1_only, resume=resume)
     if pass1_only:
         write_pass1_results(Path(settings.output_dir), orchestrator)
@@ -68,8 +72,9 @@ def main(argv: list[str] | None = None) -> int:
     setup_logging()
     try:
         settings = load_settings()
+        store = open_store(settings.store_mode, settings.output_dir)
         result = parse_input(args.input.read_bytes())
-    except (ConfigError, InvalidInput, OSError) as exc:
+    except (ConfigError, InvalidInput, StoreError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
@@ -82,12 +87,14 @@ def main(argv: list[str] | None = None) -> int:
     if not result.accepted:
         return 0
 
-    orchestrator = asyncio.run(run_job(settings, result.accepted, pass1_only=args.pass1_only, resume=args.resume))
+    orchestrator = asyncio.run(run_job(settings, result.accepted, pass1_only=args.pass1_only,
+                                       resume=args.resume, store=store))
     summary = orchestrator.summary()
     print(f"Job {summary['job_id']}: {summary['status']} (stop reason: {summary['stop_reason']})")
     for status, count in sorted(summary["outcomes"].items()):
         print(f"  {status}: {count}")
     print(f"Requests used: {summary['requests']}")
+    print(f"Output written to {settings.output_dir}/ (dossiers.jsonl, rejections.jsonl, run_report.json)")
     return 0
 
 

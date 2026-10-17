@@ -22,6 +22,10 @@ class SlidingWindowLimiter:
         self._calls.extend([now] * count)
         return True
 
+    def used(self) -> int:
+        self._drop_old()
+        return len(self._calls)
+
     def wait_seconds(self) -> float:
         self._drop_old()
         if len(self._calls) < self._limit:

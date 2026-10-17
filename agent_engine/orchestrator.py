@@ -10,7 +10,11 @@ from uuid import UUID, uuid4
 
 from agent_engine.errors import BudgetDenied, SourceUnavailable
 from agent_engine.profile import build_profile, empty_dossier
-from agent_engine.schemas import Dossier, Flag, ProcessingStatus, PublishedFact, count_verified_facts
+from agent_engine.report import build_report, write_report
+from agent_engine.schemas import (
+    Dossier, Flag, ProcessingStatus, PublishedFact, RejectionRecord, count_verified_facts,
+)
+from storage.store import SourceRecord, open_store
 
 log = logging.getLogger("signalpost.orchestrator")
 
@@ -39,6 +43,8 @@ class CompanyRun:
 class EnrichResult:
     facts: list[PublishedFact] = field(default_factory=list)
     flags: list[Flag] = field(default_factory=list)
+    rejections: list[RejectionRecord] = field(default_factory=list)
+    sources: list[SourceRecord] = field(default_factory=list)
 
 
 async def enrich_company(company: CompanyRun, ledger) -> EnrichResult:
@@ -51,7 +57,7 @@ async def finalize_partial(company: CompanyRun) -> list[PublishedFact]:
 
 class Orchestrator:
     def __init__(self, settings, registry, ledger, kill_switch, *, job_id: UUID | None = None,
-                 enrich=enrich_company, finalize=finalize_partial):
+                 enrich=enrich_company, finalize=finalize_partial, store=None, job_mode="daily_test"):
         self.settings = settings
         self.registry = registry
         self.ledger = ledger
@@ -59,29 +65,36 @@ class Orchestrator:
         self.job_id = job_id or uuid4()
         self.enrich = enrich
         self.finalize = finalize
+        self.store = store or open_store(settings.store_mode, settings.output_dir)
+        self.job_mode = job_mode
+        self.started_at: datetime | None = None
+        self.ended_at: datetime | None = None
         self.companies: dict[str, CompanyRun] = {}
         self.status = "queued"
         self.stop_reason = "none"
         self.sequence = 0
         self.events: deque = deque(maxlen=RING_SIZE)
         self.output_dir = Path(settings.output_dir)
-        self.dossier_path = self.output_dir / "dossiers.jsonl"
         self.events_path = self.output_dir / "events.jsonl"
         self.checkpoint_path = self.output_dir / "checkpoints" / "latest.json"
         self._stopped = False
         self._brake_handled = False
         self._pass1_only = False
         self._plan_c_reported = False
+        self._recorded: set[str] = set()
 
     async def run(self, orgnrs: list[str], *, pass1_only: bool = False, resume: bool = False) -> dict:
         self.checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        self.started_at = datetime.now(timezone.utc)
         self._pass1_only = pass1_only
         done = self._load_checkpoint() if resume else {}
         for orgnr in orgnrs:
             company = CompanyRun(orgnr)
             if orgnr in done:
-                company.status = ProcessingStatus(done[orgnr]["status"])
-                company.flags = [Flag(flag) for flag in done[orgnr]["flags"]]
+                company.dossier = done[orgnr]
+                company.status = company.dossier.processing_status
+                company.flags = list(company.dossier.flags)
+                self._recorded.add(orgnr)
             self.companies[orgnr] = company
 
         self.kill.start()
@@ -169,7 +182,7 @@ class Orchestrator:
 
         if company.status in TERMINAL:
             return
-        self._finish(company, result.facts, result.flags)
+        self._finish(company, result.facts, result.flags, result.rejections, result.sources)
         self.kill.company_finished()
 
     async def _on_brake(self) -> None:
@@ -214,7 +227,7 @@ class Orchestrator:
                     continue
             self._finish(company, facts, [flag])
 
-    def _finish(self, company: CompanyRun, facts=(), flags=()) -> None:
+    def _finish(self, company: CompanyRun, facts=(), flags=(), rejections=(), sources=()) -> None:
         company.status = ProcessingStatus.PUBLISHED if facts else ProcessingStatus.REGISTRY_ONLY
         company.flags = list(dict.fromkeys([*company.flags, *flags]))
         company.dossier = company.dossier.model_copy(update={
@@ -224,31 +237,46 @@ class Orchestrator:
             "published_fact_ids": [str(fact.fact_id) for fact in facts],
             "updated_at": datetime.now(timezone.utc),
         })
-        self._record(company)
+        self._record(company, facts, rejections, sources)
 
     def _finish_empty(self, company: CompanyRun, status: ProcessingStatus, flags=(), error: str | None = None) -> None:
         company.status = status
         company.flags = list(flags)
         company.dossier = empty_dossier(company.orgnr, status, self.job_id, flags)
-        self._record(company, error)
+        self._record(company, error=error)
 
-    def _record(self, company: CompanyRun, error: str | None = None) -> None:
+    def _record(self, company: CompanyRun, facts=(), rejections=(), sources=(), error: str | None = None) -> None:
         if not self._pass1_only:
-            self._append_line(self.dossier_path, company.dossier.model_dump_json(), sync=True)
+            try:
+                self.store.complete_company(company.dossier, facts, rejections, sources)
+            except OSError:
+                self._storage_failed(company)
+                return
+        self._recorded.add(company.orgnr)
         self.emit("company.finished", orgnr=company.orgnr, status=company.status.value,
                   flags=[flag.value for flag in company.flags], error=error)
         self._write_checkpoint()
+
+    def _storage_failed(self, company: CompanyRun) -> None:
+        log.exception("could not store company", extra={"fields": {"orgnr": company.orgnr}})
+        self._stopped = True
+        if self.stop_reason == "none":
+            self.stop_reason = "storage_failure"
+            self.emit("job.storage_failed", orgnr=company.orgnr)
 
     def _conclude(self) -> None:
         if self.stop_reason == "none":
             self.stop_reason = "completed"
         final = {"request_brake": "stopped_budget", "kill_switch": "stopped_time",
-                 "time_hard_stop": "stopped_time"}.get(self.stop_reason, "completed")
+                 "time_hard_stop": "stopped_time",
+                 "storage_failure": "stopped_storage"}.get(self.stop_reason, "completed")
         if final == "completed" and self._pass1_only:
             final = "pass1_complete"
         self._set_status(final)
         self.emit("job.finished", stop_reason=self.stop_reason)
         self._write_checkpoint()
+        self.ended_at = datetime.now(timezone.utc)
+        write_report(self.output_dir, build_report(self))
 
     def _set_status(self, status: str) -> None:
         self.status = status
@@ -279,13 +307,10 @@ class Orchestrator:
     def events_since(self, seq: int) -> list[dict]:
         return [event for event in self.events if event["seq"] > seq]
 
-    def _append_line(self, path: Path, line: str, sync: bool = False) -> None:
+    def _append_line(self, path: Path, line: str) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "a", encoding="utf-8") as handle:
             handle.write(line + "\n")
-            if sync:
-                handle.flush()
-                os.fsync(handle.fileno())
 
     def _write_checkpoint(self) -> None:
         state = {
@@ -297,7 +322,7 @@ class Orchestrator:
             "done": {
                 company.orgnr: {"status": company.status.value, "flags": [f.value for f in company.flags]}
                 for company in self.companies.values()
-                if company.status in TERMINAL
+                if company.orgnr in self._recorded
             },
         }
         temp = self.checkpoint_path.with_name("latest.json.tmp")
@@ -307,11 +332,11 @@ class Orchestrator:
             os.fsync(handle.fileno())
         os.replace(temp, self.checkpoint_path)
 
-    def _load_checkpoint(self) -> dict:
+    def _load_checkpoint(self) -> dict[str, Dossier]:
         if not self.checkpoint_path.exists():
             return {}
         state = json.loads(self.checkpoint_path.read_text(encoding="utf-8"))
         self.job_id = UUID(state["job_id"])
         self.sequence = state["sequence"]
         self.ledger.restore(state["ledger"])
-        return state["done"]
+        return self.store.completed(self.job_id)
