@@ -1,13 +1,20 @@
-.PHONY: run test demo pilot baseline replay api web
+INPUT ?= data/input/companies.txt
+
+.PHONY: install run test demo pilot baseline replay api web
+
+install:
+	python3.12 -m venv .venv
+	.venv/bin/pip install -r requirements.txt
+	cd frontend && npm install
 
 run:
-	bash scripts/run_one.sh data/input/companies.txt
+	bash scripts/run_one.sh $(INPUT)
 
 test:
 	pytest tests -q
 
 demo:
-	bash scripts/run_one.sh data/input/companies.txt --pass1-only
+	bash scripts/run_one.sh $(INPUT) --pass1-only
 
 pilot:
 	bash scripts/run_pilot.sh

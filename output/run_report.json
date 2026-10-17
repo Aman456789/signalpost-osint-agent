@@ -1,0 +1,41 @@
+{
+  "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726",
+  "report_version": "1.0",
+  "mode": "daily_test",
+  "started_at": "2026-10-17T15:34:36.478711Z",
+  "ended_at": "2026-10-17T15:34:45.337613Z",
+  "duration_seconds": 8,
+  "company_count": 5,
+  "outcomes": {
+    "registry_only": 5
+  },
+  "requests": {
+    "total": 17,
+    "by_kind": {
+      "registry": 15,
+      "retry": 2
+    }
+  },
+  "llm_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_estimated": false,
+  "estimated_cost_usd": "0.0000",
+  "cost_limit_usd": "10",
+  "time_limit_min": 45,
+  "stop_reason": "completed",
+  "flags": {
+    "soft_cap_reached": false,
+    "brake_tripped": false,
+    "kill_switch_tripped": false,
+    "plan_a_outage_detected": false
+  },
+  "plan_b_used_count": 0,
+  "rejections_by_reason": {},
+  "checkpoint": {
+    "path": "checkpoints/latest.json",
+    "sequence": 16
+  },
+  "config_hash": "905f1c462fe4861326d7ac41388a330f703dc16d925cb5ef611df96cd8466df1",
+  "code_version": "b97e6cb5"
+}

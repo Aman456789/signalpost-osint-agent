@@ -16,7 +16,7 @@ class Crash(BaseException):
 
 
 def read_lines(path):
-    return [json.loads(line) for line in path.read_text().splitlines()]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
 async def run_job(tmp_path, orgnrs, scenarios=None, *, brake=1950, soft_cap=1700, workers=1,

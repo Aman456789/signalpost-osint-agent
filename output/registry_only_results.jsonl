@@ -1,0 +1,5 @@
+{"orgnr": "923456783", "status": "pass1_complete", "legal_name": "BURGLAR LARVIK AS", "registry_status": "deleted", "website_url": null, "roles": 0, "revenue_nok": "927104.00", "flags": []}
+{"orgnr": "984851006", "status": "pass1_complete", "legal_name": "DNB BANK ASA", "registry_status": "active", "website_url": "https://www.dnb.no", "roles": 15, "revenue_nok": null, "flags": ["financials_unavailable"]}
+{"orgnr": "923609016", "status": "pass1_complete", "legal_name": "EQUINOR ASA", "registry_status": "active", "website_url": "https://www.equinor.com", "roles": 14, "revenue_nok": "106462000000.00", "flags": []}
+{"orgnr": "982463718", "status": "pass1_complete", "legal_name": "TELENOR ASA", "registry_status": "active", "website_url": "https://www.telenor.no/", "roles": 19, "revenue_nok": "77292000000.00", "flags": []}
+{"orgnr": "984661185", "status": "pass1_complete", "legal_name": "POSTEN BRING AS", "registry_status": "active", "website_url": null, "roles": 18, "revenue_nok": "25289000000.00", "flags": []}

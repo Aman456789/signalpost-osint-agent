@@ -24,7 +24,7 @@ class Crash(BaseException):
 
 
 def read_jsonl(path):
-    return [json.loads(line) for line in path.read_text().splitlines()]
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
 def make_rejection(orgnr, job_id, reason=RejectionReason.QUOTE_NOT_FOUND):

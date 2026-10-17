@@ -16,6 +16,16 @@ from pydantic import (
 )
 
 MIN_CONFIDENCE = Decimal("0.80")
+MAX_EVENT_MESSAGE = 300
+
+
+def truncate_message(text: str, limit: int = MAX_EVENT_MESSAGE) -> str:
+    """Event messages are at most `limit` characters; longer text is cut and ends with '...'."""
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+
 PER_COMPANY_CAP = 14
 
 Orgnr = Annotated[str, StringConstraints(pattern=r"^[0-9]{9}$")]

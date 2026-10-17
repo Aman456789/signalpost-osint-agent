@@ -1,0 +1,26 @@
+{"seq": 1, "time": "2026-10-17T15:34:06.847+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "job.started", "data": {"companies": 5, "resumed": 0, "pass1_only": true}}
+{"seq": 2, "time": "2026-10-17T15:34:06.848+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "job.status", "data": {"status": "pass1_running"}}
+{"seq": 3, "time": "2026-10-17T15:34:08.334+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "company.pass1_complete", "data": {"orgnr": "923609016", "registry_status": "active"}}
+{"seq": 4, "time": "2026-10-17T15:34:08.336+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "company.pass1_complete", "data": {"orgnr": "982463718", "registry_status": "active"}}
+{"seq": 5, "time": "2026-10-17T15:34:08.347+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "company.pass1_complete", "data": {"orgnr": "984661185", "registry_status": "active"}}
+{"seq": 6, "time": "2026-10-17T15:34:08.350+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "company.pass1_complete", "data": {"orgnr": "923456783", "registry_status": "deleted"}}
+{"seq": 7, "time": "2026-10-17T15:34:15.687+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "company.pass1_complete", "data": {"orgnr": "984851006", "registry_status": "active"}}
+{"seq": 8, "time": "2026-10-17T15:34:15.688+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "job.status", "data": {"status": "pass1_complete"}}
+{"seq": 9, "time": "2026-10-17T15:34:15.689+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "job.status", "data": {"status": "pass1_complete"}}
+{"seq": 10, "time": "2026-10-17T15:34:15.689+00:00", "job_id": "a3c866ff-b0da-496c-a632-cfdb78a5d6ba", "type": "job.finished", "data": {"stop_reason": "completed"}}
+{"seq": 1, "time": "2026-10-17T15:34:36.478+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.started", "data": {"companies": 5, "resumed": 0, "pass1_only": false}}
+{"seq": 2, "time": "2026-10-17T15:34:36.479+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.status", "data": {"status": "pass1_running"}}
+{"seq": 3, "time": "2026-10-17T15:34:37.720+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.pass1_complete", "data": {"orgnr": "984661185", "registry_status": "active"}}
+{"seq": 4, "time": "2026-10-17T15:34:37.722+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.pass1_complete", "data": {"orgnr": "982463718", "registry_status": "active"}}
+{"seq": 5, "time": "2026-10-17T15:34:37.772+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.pass1_complete", "data": {"orgnr": "923456783", "registry_status": "deleted"}}
+{"seq": 6, "time": "2026-10-17T15:34:37.777+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.pass1_complete", "data": {"orgnr": "923609016", "registry_status": "active"}}
+{"seq": 7, "time": "2026-10-17T15:34:45.272+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.pass1_complete", "data": {"orgnr": "984851006", "registry_status": "active"}}
+{"seq": 8, "time": "2026-10-17T15:34:45.272+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.status", "data": {"status": "pass1_complete"}}
+{"seq": 9, "time": "2026-10-17T15:34:45.273+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.status", "data": {"status": "pass2_running"}}
+{"seq": 10, "time": "2026-10-17T15:34:45.287+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.finished", "data": {"orgnr": "923456783", "status": "registry_only", "flags": [], "error": null}}
+{"seq": 11, "time": "2026-10-17T15:34:45.305+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.finished", "data": {"orgnr": "984851006", "status": "registry_only", "flags": [], "error": null}}
+{"seq": 12, "time": "2026-10-17T15:34:45.314+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.finished", "data": {"orgnr": "923609016", "status": "registry_only", "flags": [], "error": null}}
+{"seq": 13, "time": "2026-10-17T15:34:45.323+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.finished", "data": {"orgnr": "982463718", "status": "registry_only", "flags": [], "error": null}}
+{"seq": 14, "time": "2026-10-17T15:34:45.331+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "company.finished", "data": {"orgnr": "984661185", "status": "registry_only", "flags": [], "error": null}}
+{"seq": 15, "time": "2026-10-17T15:34:45.334+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.status", "data": {"status": "completed"}}
+{"seq": 16, "time": "2026-10-17T15:34:45.334+00:00", "job_id": "0ab1361f-6611-45c4-9a08-67b67e4a3726", "type": "job.finished", "data": {"stop_reason": "completed"}}

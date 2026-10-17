@@ -19,6 +19,7 @@ HEADERS = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"
 MAX_HOPS = 5
 MAX_WIRE_BYTES = 2 * 1024 * 1024
 MAX_DECODED_BYTES = 10 * 1024 * 1024
+PLAYWRIGHT_MAX_BYTES = 5 * 1024 * 1024
 RETRY_PAUSE_S = (1.0, 2.0)
 REDIRECTS = {301, 302, 303, 307, 308}
 
@@ -250,3 +251,43 @@ class Scraper:
         rules.parse(lines)
         rules.modified()
         return rules
+
+
+def _declared_length(headers) -> int | None:
+    for name, value in (headers or {}).items():
+        if str(name).lower() == "content-length" and str(value).strip().isdigit():
+            return int(str(value).strip())
+    return None
+
+
+def oversized(headers, body: bytes | None = None, limit: int = PLAYWRIGHT_MAX_BYTES) -> bool:
+    """True when a browser request or response is larger than `limit` bytes."""
+    declared = _declared_length(headers)
+    if declared is not None and declared > limit:
+        return True
+    return body is not None and len(body) > limit
+
+
+async def install_browser_size_guard(page, limit: int = PLAYWRIGHT_MAX_BYTES) -> None:
+    """Abort any Playwright request or response above `limit` bytes (default 5 MB).
+
+    Playwright is not built yet (PLAYWRIGHT_ENABLED must stay false), so nothing calls this.
+    A future browser fetcher must call it on every page before navigating.
+    """
+
+    async def guard(route):
+        request = route.request
+        if oversized(request.headers, request.post_data_buffer, limit):
+            await route.abort("blockedbyclient")
+            return
+        try:
+            response = await route.fetch()
+        except Exception:
+            await route.abort("failed")
+            return
+        if oversized(response.headers, await response.body(), limit):
+            await route.abort("blockedbyclient")
+            return
+        await route.fulfill(response=response)
+
+    await page.route("**/*", guard)

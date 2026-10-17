@@ -11,6 +11,7 @@ from uuid import UUID, uuid4
 from agent_engine.errors import BudgetDenied, SourceUnavailable
 from agent_engine.profile import build_profile, empty_dossier
 from agent_engine.report import build_report, write_report
+from agent_engine.schemas import truncate_message
 from agent_engine.schemas import (
     Dossier, Flag, ProcessingStatus, PublishedFact, RejectionRecord, count_verified_facts,
 )
@@ -293,6 +294,8 @@ class Orchestrator:
         }
 
     def emit(self, kind: str, **data) -> None:
+        if isinstance(data.get("message"), str):
+            data["message"] = truncate_message(data["message"])
         self.sequence += 1
         event = {
             "seq": self.sequence,

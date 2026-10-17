@@ -125,6 +125,7 @@ export default function ReportPage() {
             ))}
             <Row label="Remaining to soft cap">{formatNumber(Math.max(0, budget.soft_cap - report.requests.total))}</Row>
             <Row label="Remaining to brake">{formatNumber(Math.max(0, budget.brake - report.requests.total))}</Row>
+            <Row label="Plan B used">{formatNumber(report.plan_b_used_count)}</Row>
           </tbody>
         </table>
       </section>

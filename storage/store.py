@@ -1,4 +1,8 @@
-import fcntl
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
+
 import json
 import os
 from collections import Counter, defaultdict
@@ -108,7 +112,8 @@ class JsonlStore:
     @contextmanager
     def _locked(self):
         with open(self.dir / ".store.lock", "a") as handle:
-            fcntl.flock(handle, fcntl.LOCK_EX)
+            if fcntl is not None:
+                fcntl.flock(handle, fcntl.LOCK_EX)
             yield
 
     def _load(self) -> None:

@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
+from agent_engine.schemas import truncate_message
 from api.request_body import malformed
 from api.state import JobRecord, find_job, get_state
 
@@ -39,7 +40,7 @@ def public_event(event: dict) -> dict:
         "job_id": event["job_id"],
         "type": event["type"],
         "orgnr": data.get("orgnr"),
-        "message": message,
+        "message": truncate_message(message),
         "data": data,
     }
 
